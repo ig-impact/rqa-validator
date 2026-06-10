@@ -22,7 +22,7 @@ site_description = "Data quality validation for RQA datasets."
 # The site_author attribute. This is used in the HTML head element.
 #
 # Read more: https://zensical.org/docs/setup/basics/#site_author
-site_author = "Iyed GHEDAMSI"
+site_author = "Greg SABELLA"
 
 repo_url = "https://github.com/ig-impact/rqa-validator"
 repo_name = "ig-impact/rqa-validator"
