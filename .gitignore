@@ -17,5 +17,9 @@ wheels/
 *.ipynb
 logs/
 
+# docs — generated at build time by docs/gen_rules.py
+docs/rules/
+site/
+
 # ide files
 *.vscode

@@ -17,6 +17,8 @@ dev = [
     "ruff>=0.15.9",
     "pytest>=9.0.3",
     "pytest-cov>=7.1.0",
+    "zensical>=0.0.45",
+    "mkdocstrings-python>=2.0.4",
 ]
 
 [tool.ruff]
