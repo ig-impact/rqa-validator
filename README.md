@@ -6,6 +6,51 @@
 - jmmi datasets
 - other datasets through dynamic schema generation - see below.
 
+## JMMI Validation Flow
+
+```mermaid
+flowchart TD
+    A(["Excel file (.xlsx)"])
+
+    subgraph SCHEMA["JMMIDatasetSchema"]
+        direction LR
+        LS["loaded: raw_data · clean_data · deletion_log<br>cleaning_log · survey · choices"]
+        ULS["unloaded: read_me · sampling_info · variable_tracker<br>meb_analysis · mfs_analysis · enumerator_performance_log"]
+    end
+
+    A --> LOADER["ExcelLoader<br>fuzzy sheet & column name matching"]
+    SCHEMA --> LOADER
+
+    LOADER --> PRE{"schema<br>pre-validation"}
+    PRE -- "duplicate names / schema error" --> OUT
+    PRE -- pass --> DATA(["ExcelLoaderData<br>mapped sheets, columns & data"])
+
+    DATA --> SV
+
+    subgraph SV["Schema Validation — 5 checks"]
+        direction TB
+        SV1["MissingSheetsCheck · UnexpectedSheetsCheck<br>DuplicateSheetMatches · MandatoryColumns · UniqueColumn"]
+    end
+
+    SV --> DV
+
+    subgraph DV["Data Validation — 11 checks"]
+        direction TB
+        DV1["PiiDataCheck"]
+        DV2["CrossSheetRowSumCheck<br>raw_data rows = clean_data + deletion_log"]
+        DV3["CrossSheetIdCheck ×2<br>raw_data ← {clean_data, deletion_log, cleaning_log}<br>clean_data ← {cleaning_log}"]
+        DV4["CleaningLogToClean · RawToCleanToLog"]
+        DV5["NaNDataCheck · ConsentCheck · ColumnNameCheck<br>DataTypeCheck · SurveyChoicesCheck"]
+        DV1 --> DV2 --> DV3 --> DV4 --> DV5
+    end
+
+    DV --> OUT
+
+    subgraph OUT["Output"]
+        O["success: bool · summary: counts by severity<br>error · warning · info · passed · admin_error · admin_info"]
+    end
+```
+
 ## Project structure
 This project is designed to allow for the validation of different excel based datasets through the construction of a dataset schema and specifying a list of validation rules that are required to be run.
 
